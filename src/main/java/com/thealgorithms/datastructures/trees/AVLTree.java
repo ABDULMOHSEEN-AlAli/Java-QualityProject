@@ -186,55 +186,43 @@ public class AVLTree {
             root = n;
         }
     }
-
-    private Node rotateLeft(Node a) {
-        Node b = a.right;
-        b.parent = a.parent;
-
-        a.right = b.left;
-
-        if (a.right != null) {
-            a.right.parent = a;
-        }
-
-        b.left = a;
-        a.parent = b;
-
-        if (b.parent != null) {
-            if (b.parent.right == a) {
-                b.parent.right = b;
+    private void updateParent(Node node, Node child) {
+        if (node.parent != null) {
+            if (node.parent.right == node) {
+                node.parent.right = child;
             } else {
-                b.parent.left = b;
+                node.parent.left = child;
             }
         }
+    }
+    private Node rotate(Node a, boolean isLeftRotation) {
+        Node b = isLeftRotation ? a.right : a.left;
+        Node child = isLeftRotation ? b.left : b.right;
 
+        b.parent = a.parent;
+        a.parent = b;
+        child.parent = a;
+
+        if (isLeftRotation) {
+            a.right = child;
+            b.left = a;
+        } else {
+            a.left = child;
+            b.right = a;
+        }
+
+        updateParent(a, b);
         setBalance(a, b);
+
         return b;
+    }
+    private Node rotateLeft(Node a) {
+        return rotate(a, true);
+
     }
 
     private Node rotateRight(Node a) {
-        Node b = a.left;
-        b.parent = a.parent;
-
-        a.left = b.right;
-
-        if (a.left != null) {
-            a.left.parent = a;
-        }
-
-        b.right = a;
-        a.parent = b;
-
-        if (b.parent != null) {
-            if (b.parent.right == a) {
-                b.parent.right = b;
-            } else {
-                b.parent.left = b;
-            }
-        }
-
-        setBalance(a, b);
-        return b;
+        return rotate(a, true);
     }
 
     private Node rotateLeftThenRight(Node n) {
