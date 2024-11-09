@@ -28,17 +28,7 @@ public final class ColumnarTranspositionCipher {
      * Cipher Rule
      */
     public static String encrypt(final String word, final String keyword) {
-        ColumnarTranspositionCipher.keyword = keyword;
-        abecedariumBuilder();
-        table = tableBuilder(word);
-        Object[][] sortedTable = sortTable(table);
-        StringBuilder wordEncrypted = new StringBuilder();
-        for (int i = 0; i < sortedTable[0].length; i++) {
-            for (int j = 1; j < sortedTable.length; j++) {
-                wordEncrypted.append(sortedTable[j][i]);
-            }
-        }
-        return wordEncrypted.toString();
+        return encrypt(word, keyword, null);
     }
 
     /**
@@ -56,7 +46,15 @@ public final class ColumnarTranspositionCipher {
         ColumnarTranspositionCipher.abecedarium = Objects.requireNonNullElse(abecedarium, ABECEDARIUM);
         table = tableBuilder(word);
         Object[][] sortedTable = sortTable(table);
-
+        return extractEncryptedText(sortedTable);
+    }
+    /**
+     * Extracts the encrypted text from the sorted table.
+     *
+     * @param sortedTable The table containing the sorted characters.
+     * @return The encrypted text.
+     */
+    private static String extractEncryptedText(Object[][] sortedTable) {
         StringBuilder wordEncrypted = new StringBuilder();
         for (int i = 0; i < sortedTable[0].length; i++) {
             for (int j = 1; j < sortedTable.length; j++) {
@@ -65,7 +63,6 @@ public final class ColumnarTranspositionCipher {
         }
         return wordEncrypted.toString();
     }
-
     /**
      * Decrypts a certain encrypted String with the Columnar Transposition
      * Cipher Rule
