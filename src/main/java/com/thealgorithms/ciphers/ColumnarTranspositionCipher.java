@@ -10,6 +10,17 @@ import java.util.Objects;
 public final class ColumnarTranspositionCipher {
     private ColumnarTranspositionCipher() {
     }
+    private static String encryptCore(String word, String keyword, Object[][] table) {
+        Object[][] sortedTable = sortTable(table);
+        StringBuilder wordEncrypted = new StringBuilder();
+        for (int i = 0; i < sortedTable[0].length; i++) {
+            for (int j = 1; j < sortedTable.length; j++) {
+                wordEncrypted.append(sortedTable[j][i]);
+            }
+        }
+        return wordEncrypted.toString();
+    }
+
 
     private static String keyword;
     private static Object[][] table;
@@ -31,14 +42,7 @@ public final class ColumnarTranspositionCipher {
         ColumnarTranspositionCipher.keyword = keyword;
         abecedariumBuilder();
         table = tableBuilder(word);
-        Object[][] sortedTable = sortTable(table);
-        StringBuilder wordEncrypted = new StringBuilder();
-        for (int i = 0; i < sortedTable[0].length; i++) {
-            for (int j = 1; j < sortedTable.length; j++) {
-                wordEncrypted.append(sortedTable[j][i]);
-            }
-        }
-        return wordEncrypted.toString();
+        return encryptCore(word, keyword, table);
     }
 
     /**
@@ -55,15 +59,7 @@ public final class ColumnarTranspositionCipher {
         ColumnarTranspositionCipher.keyword = keyword;
         ColumnarTranspositionCipher.abecedarium = Objects.requireNonNullElse(abecedarium, ABECEDARIUM);
         table = tableBuilder(word);
-        Object[][] sortedTable = sortTable(table);
-
-        StringBuilder wordEncrypted = new StringBuilder();
-        for (int i = 0; i < sortedTable[0].length; i++) {
-            for (int j = 1; j < sortedTable.length; j++) {
-                wordEncrypted.append(sortedTable[j][i]);
-            }
-        }
-        return wordEncrypted.toString();
+        return encryptCore(word, keyword, table);
     }
 
     /**
