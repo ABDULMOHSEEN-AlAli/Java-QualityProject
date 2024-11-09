@@ -18,7 +18,21 @@ public final class ColumnarTranspositionCipher {
         + "HIJKLMNOPQRSTUVWXYZ0123456789,.;:-@";
     private static final String ENCRYPTION_FIELD = "≈";
     private static final char ENCRYPTION_FIELD_CHAR = '≈';
-
+    /**
+     * Builds the encrypted string by appending characters column-wise from the sorted table.
+     *
+     * @param sortedTable The table that has been sorted by column
+     * @return A string representing the encrypted word
+     */
+    private static String buildEncryptedString(Object[][] sortedTable) {
+        StringBuilder wordEncrypted = new StringBuilder();
+        for (int i = 0; i < sortedTable[0].length; i++) {
+            for (int j = 1; j < sortedTable.length; j++) {
+                wordEncrypted.append(sortedTable[j][i]);
+            }
+        }
+        return wordEncrypted.toString();
+    }
     /**
      * Encrypts a certain String with the Columnar Transposition Cipher Rule
      *
@@ -32,13 +46,7 @@ public final class ColumnarTranspositionCipher {
         abecedariumBuilder();
         table = tableBuilder(word);
         Object[][] sortedTable = sortTable(table);
-        StringBuilder wordEncrypted = new StringBuilder();
-        for (int i = 0; i < sortedTable[0].length; i++) {
-            for (int j = 1; j < sortedTable.length; j++) {
-                wordEncrypted.append(sortedTable[j][i]);
-            }
-        }
-        return wordEncrypted.toString();
+        return buildEncryptedString(sortedTable);
     }
 
     /**
@@ -56,14 +64,7 @@ public final class ColumnarTranspositionCipher {
         ColumnarTranspositionCipher.abecedarium = Objects.requireNonNullElse(abecedarium, ABECEDARIUM);
         table = tableBuilder(word);
         Object[][] sortedTable = sortTable(table);
-
-        StringBuilder wordEncrypted = new StringBuilder();
-        for (int i = 0; i < sortedTable[0].length; i++) {
-            for (int j = 1; j < sortedTable.length; j++) {
-                wordEncrypted.append(sortedTable[j][i]);
-            }
-        }
-        return wordEncrypted.toString();
+        return buildEncryptedString(sortedTable);
     }
 
     /**
