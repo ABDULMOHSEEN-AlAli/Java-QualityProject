@@ -186,20 +186,31 @@ public class AVLTree {
             root = n;
         }
     }
+    private Node rotate(Node a, boolean isLeftRotation) {
+        // Select the appropriate child based on rotation direction
+        Node b = isLeftRotation ? a.right : a.left;
+        Node tempChild = isLeftRotation ? b.left : b.right;
 
-    private Node rotateLeft(Node a) {
-        Node b = a.right;
+        // Update parent references
         b.parent = a.parent;
 
-        a.right = b.left;
-
-        if (a.right != null) {
-            a.right.parent = a;
+        // Update child references based on rotation direction
+        if (isLeftRotation) {
+            a.right = tempChild;
+            b.left = a;
+        } else {
+            a.left = tempChild;
+            b.right = a;
         }
 
-        b.left = a;
+        // Update child's parent if it exists
+        if (tempChild != null) {
+            tempChild.parent = a;
+        }
+
         a.parent = b;
 
+        // Update parent's child reference
         if (b.parent != null) {
             if (b.parent.right == a) {
                 b.parent.right = b;
@@ -211,30 +222,14 @@ public class AVLTree {
         setBalance(a, b);
         return b;
     }
+    private Node rotateLeft(Node a) {
+        return rotate(a, true);
+
+    }
 
     private Node rotateRight(Node a) {
-        Node b = a.left;
-        b.parent = a.parent;
+        return rotate(a, false);
 
-        a.left = b.right;
-
-        if (a.left != null) {
-            a.left.parent = a;
-        }
-
-        b.right = a;
-        a.parent = b;
-
-        if (b.parent != null) {
-            if (b.parent.right == a) {
-                b.parent.right = b;
-            } else {
-                b.parent.left = b;
-            }
-        }
-
-        setBalance(a, b);
-        return b;
     }
 
     private Node rotateLeftThenRight(Node n) {
