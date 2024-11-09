@@ -19,18 +19,32 @@ public final class ColumnarTranspositionCipher {
     private static final String ENCRYPTION_FIELD = "≈";
     private static final char ENCRYPTION_FIELD_CHAR = '≈';
 
+    private static class EncryptionConfig {
+        private final String keyword;
+        private final String abecedarium;
+
+        public EncryptionConfig(String keyword, String customAbecedarium) {
+            this.keyword = keyword;
+            this.abecedarium = customAbecedarium;
+        }
+
+        public static EncryptionConfig createDefault(String keyword) {
+            StringBuilder defaultAbecedarium = new StringBuilder();
+            for (int i = 0; i < 256; i++) {
+                defaultAbecedarium.append((char) i);
+            }
+            return new EncryptionConfig(keyword, defaultAbecedarium.toString());
+        }
+    }
+
     /**
-     * Encrypts a certain String with the Columnar Transposition Cipher Rule
-     *
-     * @param word Word being encrypted
-     * @param keyword String with keyword being used
-     * @return a String with the word encrypted by the Columnar Transposition
-     * Cipher Rule
+     * Main encryption logic using the configuration parameters
      */
-    public static String encrypt(final String word, final String keyword) {
-        ColumnarTranspositionCipher.keyword = keyword;
-        abecedariumBuilder();
+    private static String performEncryption(String word, EncryptionConfig config) {
+        ColumnarTranspositionCipher.keyword = config.keyword;
+        ColumnarTranspositionCipher.abecedarium = config.abecedarium;
         table = tableBuilder(word);
+
         Object[][] sortedTable = sortTable(table);
         StringBuilder wordEncrypted = new StringBuilder();
         for (int i = 0; i < sortedTable[0].length; i++) {
@@ -40,6 +54,20 @@ public final class ColumnarTranspositionCipher {
         }
         return wordEncrypted.toString();
     }
+    /**
+     * Encrypts a certain String with the Columnar Transposition Cipher Rule
+     *
+     * @param word Word being encrypted
+     * @param keyword String with keyword being used
+     * @return a String with the word encrypted by the Columnar Transposition
+     * Cipher Rule
+     */
+    public static String encrypt(final String word, final String keyword) {
+        return performEncryption(word, EncryptionConfig.createDefault(keyword));
+
+    }
+
+
 
     /**
      * Encrypts a certain String with the Columnar Transposition Cipher Rule
@@ -52,18 +80,8 @@ public final class ColumnarTranspositionCipher {
      * Cipher Rule
      */
     public static String encrypt(String word, String keyword, String abecedarium) {
-        ColumnarTranspositionCipher.keyword = keyword;
-        ColumnarTranspositionCipher.abecedarium = Objects.requireNonNullElse(abecedarium, ABECEDARIUM);
-        table = tableBuilder(word);
-        Object[][] sortedTable = sortTable(table);
-
-        StringBuilder wordEncrypted = new StringBuilder();
-        for (int i = 0; i < sortedTable[0].length; i++) {
-            for (int j = 1; j < sortedTable.length; j++) {
-                wordEncrypted.append(sortedTable[j][i]);
-            }
-        }
-        return wordEncrypted.toString();
+        return performEncryption(word, new EncryptionConfig(keyword,
+                Objects.requireNonNullElse(abecedarium, ABECEDARIUM)));
     }
 
     /**
