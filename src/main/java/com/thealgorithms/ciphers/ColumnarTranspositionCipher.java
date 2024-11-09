@@ -1,6 +1,7 @@
 package com.thealgorithms.ciphers;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * Columnar Transposition Cipher Encryption and Decryption.
@@ -32,13 +33,8 @@ public final class ColumnarTranspositionCipher {
         abecedariumBuilder();
         table = tableBuilder(word);
         Object[][] sortedTable = sortTable(table);
-        StringBuilder wordEncrypted = new StringBuilder();
-        for (int i = 0; i < sortedTable[0].length; i++) {
-            for (int j = 1; j < sortedTable.length; j++) {
-                wordEncrypted.append(sortedTable[j][i]);
-            }
-        }
-        return wordEncrypted.toString();
+        return applyEncryptionLogic(sortedTable, ColumnarTranspositionCipher::buildEncryptedString);
+
     }
 
     /**
@@ -57,6 +53,13 @@ public final class ColumnarTranspositionCipher {
         table = tableBuilder(word);
         Object[][] sortedTable = sortTable(table);
 
+        return applyEncryptionLogic(sortedTable, ColumnarTranspositionCipher::buildEncryptedString);
+
+    }
+    private static String applyEncryptionLogic(Object[][] sortedTable, Function<Object[][], String> encryptionLogic) {
+        return encryptionLogic.apply(sortedTable);
+    }
+    private static String buildEncryptedString(Object[][] sortedTable) {
         StringBuilder wordEncrypted = new StringBuilder();
         for (int i = 0; i < sortedTable[0].length; i++) {
             for (int j = 1; j < sortedTable.length; j++) {
@@ -65,7 +68,6 @@ public final class ColumnarTranspositionCipher {
         }
         return wordEncrypted.toString();
     }
-
     /**
      * Decrypts a certain encrypted String with the Columnar Transposition
      * Cipher Rule
