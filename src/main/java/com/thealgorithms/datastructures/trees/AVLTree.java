@@ -221,7 +221,7 @@ public class AVLTree {
         if (a.left != null) {
             a.left.parent = a;
         }
-
+//pop
         b.right = a;
         a.parent = b;
         // Update parent's child reference after rotation
