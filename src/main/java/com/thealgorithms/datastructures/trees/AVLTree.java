@@ -186,7 +186,15 @@ public class AVLTree {
             root = n;
         }
     }
-
+    private void updateParentReferences(Node oldChild, Node newChild) {
+        if (newChild.parent != null) {
+            if (newChild.parent.right == oldChild) {
+                newChild.parent.right = newChild;
+            } else {
+                newChild.parent.left = newChild;
+            }
+        }
+    }
     private Node rotateLeft(Node a) {
         Node b = a.right;
         b.parent = a.parent;
@@ -200,14 +208,7 @@ public class AVLTree {
         b.left = a;
         a.parent = b;
 
-        if (b.parent != null) {
-            if (b.parent.right == a) {
-                b.parent.right = b;
-            } else {
-                b.parent.left = b;
-            }
-        }
-
+        updateParentReferences(a, b);
         setBalance(a, b);
         return b;
     }
@@ -225,14 +226,7 @@ public class AVLTree {
         b.right = a;
         a.parent = b;
 
-        if (b.parent != null) {
-            if (b.parent.right == a) {
-                b.parent.right = b;
-            } else {
-                b.parent.left = b;
-            }
-        }
-
+        updateParentReferences(a, b);
         setBalance(a, b);
         return b;
     }
