@@ -10,6 +10,27 @@ import java.util.Objects;
 public final class ColumnarTranspositionCipher {
     private ColumnarTranspositionCipher() {
     }
+    private static Object[][] buildAndSortTable(String word) {
+        Object[][] table = new Object[numberOfRows(word) + 1][keyword.length()];
+        char[] wordInChars = word.toCharArray();
+
+        // Fill the first row with element positions in the abecedarium
+        table[0] = findElements();
+
+        int charElement = 0;
+        for (int i = 1; i < table.length; i++) {
+            for (int j = 0; j < table[i].length; j++) {
+                if (charElement < wordInChars.length) {
+                    table[i][j] = wordInChars[charElement];
+                    charElement++;
+                } else {
+                    table[i][j] = ENCRYPTION_FIELD_CHAR;
+                }
+            }
+        }
+
+        return sortTable(table.clone()); // Clone the table before sorting to avoid modifying original data
+    }
 
     private static String keyword;
     private static Object[][] table;
@@ -30,15 +51,7 @@ public final class ColumnarTranspositionCipher {
     public static String encrypt(final String word, final String keyword) {
         ColumnarTranspositionCipher.keyword = keyword;
         abecedariumBuilder();
-        table = tableBuilder(word);
-        Object[][] sortedTable = sortTable(table);
-        StringBuilder wordEncrypted = new StringBuilder();
-        for (int i = 0; i < sortedTable[0].length; i++) {
-            for (int j = 1; j < sortedTable.length; j++) {
-                wordEncrypted.append(sortedTable[j][i]);
-            }
-        }
-        return wordEncrypted.toString();
+        return encryptInternal(word, keyword);
     }
 
     /**
@@ -53,10 +66,14 @@ public final class ColumnarTranspositionCipher {
      */
     public static String encrypt(String word, String keyword, String abecedarium) {
         ColumnarTranspositionCipher.keyword = keyword;
-        ColumnarTranspositionCipher.abecedarium = Objects.requireNonNullElse(abecedarium, ABECEDARIUM);
-        table = tableBuilder(word);
-        Object[][] sortedTable = sortTable(table);
+        ColumnarTranspositionCipher.abecedarium = Objects.requireNonNullElse(abecedarium,
+                ABECEDARIUM);
+        return encryptInternal(word, keyword);
+    }
 
+    // Internal method to handle encryption logic
+    private static String encryptInternal(String word, String keyword) {
+        Object[][] sortedTable = buildAndSortTable(word);
         StringBuilder wordEncrypted = new StringBuilder();
         for (int i = 0; i < sortedTable[0].length; i++) {
             for (int j = 1; j < sortedTable.length; j++) {
@@ -64,8 +81,8 @@ public final class ColumnarTranspositionCipher {
             }
         }
         return wordEncrypted.toString();
-    }
 
+    }
     /**
      * Decrypts a certain encrypted String with the Columnar Transposition
      * Cipher Rule
